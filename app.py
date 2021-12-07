@@ -7,6 +7,7 @@ replay = []
 replayed = 1
 my_teams = copy.deepcopy(constants.TEAMS)
 my_players = copy.deepcopy(constants.PLAYERS)
+store_cleaned_players = []
 
 
 def menu():
@@ -65,16 +66,19 @@ def choose_team():
             
             
 def clean_data():
-    cleaned_players = []
-    for data in my_players:
-        add_player_data = {}
-        add_player_data['name'] = data['name']
-        if data['experience'] == 'YES':
-            add_player_data['experience'] = True
-        else:
-            add_player_data['experience'] = False
-        add_player_data["height"] = int(data['height'].split(' ')[0])
-        cleaned_players.append(add_player_data)
+    if len(replay) == 0:
+        cleaned_players = []
+        for data in my_players:
+            add_player_data = {}
+            add_player_data['name'] = data['name']
+            if data['experience'] == 'YES':
+                add_player_data['experience'] = True
+            else:
+                add_player_data['experience'] = False
+            add_player_data["height"] = int(data['height'].split(' ')[0])
+            cleaned_players.append(add_player_data)
+    else:
+        cleaned_players = store_cleaned_players[0].copy()
     return cleaned_players
     
     
@@ -82,9 +86,10 @@ def balance_teams():
     cleaned_players = clean_data()
     each_team_total = int(len(cleaned_players) / len(my_teams))
     if len(replay) == 0:
-        shuffled_players = random.shuffle(my_players)
+        shuffled_players = random.shuffle(cleaned_players)
+        store_cleaned_players.append(cleaned_players.copy())
     player_names = []
-    for player in my_players:
+    for player in cleaned_players:
         add_player_data = {}
         add_player_data = player["name"]
         player_names.append(add_player_data)
